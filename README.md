@@ -218,7 +218,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'io.github.mrasterisco.time:time:<version>'
+    implementation 'io.github.mrasterisco:time:1.0.0'
 }
 ```
 
