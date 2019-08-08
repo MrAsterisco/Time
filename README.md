@@ -238,4 +238,4 @@ Time was inspired by a Swift library of the same name - [Time](https://github.co
 
 
 ## License
-Time is distributed under the MIT license. [See LICENSE](https://github.com/kizitonwose/Time/blob/master/LICENSE.md) for details.
+Time is distributed under the MIT license. [See LICENSE](https://github.com/MrAsterisco/Time/blob/master/LICENSE) for details.
