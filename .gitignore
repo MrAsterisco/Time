@@ -28,5 +28,3 @@ hs_err_pid*
 /build
 /out
 *.iml
-
-gradle.properties
