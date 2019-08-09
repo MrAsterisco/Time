@@ -210,7 +210,7 @@ Add the repository to your `build.gradle`:
 allprojects {
  repositories {
     maven { url "https://dl.bintray.com/mrasterisco/Maven" }
-    }
+ }
 }
 ```
 
@@ -218,16 +218,22 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation 'io.github.mrasterisco:time:1.0.0'
+    implementation "io.github.mrasterisco:time-common:<version>"
 }
 ```
 
 ### Compatibility
 
-The library uses only Kotlin common code and does not provide explicit implementation for any platform, hence it should work out-of-the-box everywhere.
-Unit tests run successfully on all platforms, except for JS which I haven't had the time to configure the environment for.
+The library uses only Kotlin common code and does not provide explicit implementation for any platform, hence it should work out-of-the-box everywhere. See the table below for further details:
 
-There is not a configured target for Windows, but it can be added following the [official guide](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#supported-platforms).
+|                      	|     iOS     	|    macOS    	|     JVM     	|                nodeJS                	|  browserJS  	| Windows 	| Linux 	|
+|:--------------------:	|:-----------:	|:-----------:	|:-----------:	|:------------------------------------:	|:-----------:	|:-------:	|:-----:	|
+|  Built using Gradle  	|     YES     	|     YES     	|     YES     	|                  YES                 	|     YES     	|    NO   	|   NO  	|
+|    Unit Tests ran    	| YES, passed 	| YES, passed 	| YES, passed 	| YES, failed due to bad configuration 	| YES, passed 	|    NO   	|   NO  	|
+| Published to Bintray 	|  YES, -ios  	| YES, -macos 	|  YES, -jvm  	|               YES, -js               	|   YES, -js  	|    NO   	|   NO  	|
+|   Used in a Project  	|     YES     	|      NO     	|     YES     	|                  NO                  	|      NO     	|    NO   	|   NO  	|
+
+If you start using this library in a project different than iOS and Android, make a PR to update this file, so that others know that it has been implemented successfully somewhere.
 
 ## Contributing
 The goal is for the library to be used wherever possible. If there are extension functions or features you think the library should have, feel free to add them and send a pull request or open an issue.
@@ -235,7 +241,6 @@ The goal is for the library to be used wherever possible. If there are extension
 ## Inspiration
 This library is heavily based on the [Time](https://github.com/kizitonwose/Time) for Android with a few changes in order to make it work in the Kotlin multiplatform environment.
 Time was inspired by a Swift library of the same name - [Time](https://github.com/dreymonde/Time).
-
 
 ## License
 Time is distributed under the MIT license. [See LICENSE](https://github.com/MrAsterisco/Time/blob/master/LICENSE) for details.
