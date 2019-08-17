@@ -10,7 +10,7 @@ class Interval<out T: TimeUnit>(value: Number, factory: () -> T) {
 
     val value = value.toDouble()
 
-    val longValue = round(this.value)
+    val longValue = round(this.value).toLong()
 
     val inDays: Interval<Day>
         get() = converted(Day())
