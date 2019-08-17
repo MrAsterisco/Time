@@ -218,7 +218,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation "io.github.mrasterisco:time-common:<version>"
+    implementation "io.github.mrasterisco:time-<common|jvm|js|ios|macos>:<version>"
 }
 ```
 
