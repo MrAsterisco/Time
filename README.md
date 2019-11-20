@@ -218,7 +218,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    implementation "io.github.mrasterisco:time-<common|jvm|js|ios|macos>:<version>"
+    implementation "io.github.mrasterisco:Time-<metadata|jvm|js|iosamr64|iosx86|macos>:<version>"
 }
 ```
 
@@ -230,7 +230,7 @@ The library uses only Kotlin common code and does not provide explicit implement
 |:--------------------:	|:-----------:	|:-----------:	|:-----------:	|:------------------------------------:	|:-----------:	|:-------:	|:-----:	|
 |  Built using Gradle  	|     YES     	|     YES     	|     YES     	|                  YES                 	|     YES     	|    NO   	|   NO  	|
 |    Unit Tests ran    	| YES, passed 	| YES, passed 	| YES, passed 	| YES, failed due to bad configuration 	| YES, passed 	|    NO   	|   NO  	|
-| Published to Bintray 	|  YES, -ios  	| YES, -macos 	|  YES, -jvm  	|               YES, -js               	|   YES, -js  	|    NO   	|   NO  	|
+| Published to Bintray 	|  YES, -iosX64/-iosarm64  	| YES, -macos 	|  YES, -jvm  	|               YES, -js               	|   YES, -js  	|    NO   	|   NO  	|
 |   Used in a Project  	|     YES     	|      NO     	|     YES     	|                  NO                  	|      NO     	|    NO   	|   NO  	|
 
 If you start using this library in a project different than iOS and Android, make a PR to update this file, so that others know that it has been implemented successfully somewhere.
