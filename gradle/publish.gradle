@@ -12,18 +12,6 @@ if (Files.exists(Paths.get("$project.rootDir/local.properties"))) {
     localProperties.each { prop -> project.ext.set(prop.key, prop.value) }
 }
 
-publishing {
-    repositories {
-        maven {
-            url = "https://${project.bintrayOrg}.bintray.com/${project.bintrayRepository}"
-        }
-    }
-
-    publications.all { publication ->
-        pom.withXml(configureMavenCentralMetadata)
-    }
-}
-
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
@@ -44,14 +32,69 @@ bintray {
     }
 }
 
+def isMultiplatform = project.name == "time"
+
+afterEvaluate {
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        if (isMultiplatform) {
+            from kotlin.sourceSets.commonMain.kotlin
+        }
+    }
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+}
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                url = "https://${project.bintrayOrg}.bintray.com/${project.bintrayRepository}"
+            }
+        }
+
+        publications.all { publication ->
+            pom.withXml(configureMavenCentralMetadata)
+
+            // Publish all native under the iOS package.
+            if (publication.name == 'kotlinMultiplatform') {
+                artifactId = "$bintrayPackage"
+                artifact sourcesJar
+            }
+            // Publish the common module.
+            else if (publication.name == 'metadata') {
+                artifactId = "$bintrayPackage-common"
+            }
+            // Publish all the other modules.
+            else {
+                artifactId = "$bintrayPackage-$publication.name"
+            }
+
+            if (!publication.name.contains('ios') && publication.name != 'kotlinMultiplatform') {
+                moduleDescriptorGenerator = null
+            }
+        }
+    }
+}
+
 bintrayUpload.dependsOn publishToMavenLocal
 
-// This is for easier debugging of bintray uploading problems
 bintrayUpload.doFirst {
     publications = project.publishing.publications.findAll {
         !it.name.contains('-test')
     }.collect {
         println("Uploading artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
+        it.name
+    }
+}
+
+publishToMavenLocal.doFirst {
+    project.publishing.publications.findAll {
+        !it.name.contains('-test')
+    }.collect {
+        println("Will upload artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
         it.name
     }
 }

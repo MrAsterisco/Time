@@ -35,6 +35,7 @@ kotlin {
         }
 
         ios()
+        watchos()
         macosX64("macos")
     }
 
