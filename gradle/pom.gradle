@@ -1,5 +1,5 @@
 
-def pomConfig = {
+project.ext.pomConfig = {
     licenses {
         license {
             name "MIT License"
@@ -28,5 +28,3 @@ project.ext.configureMavenCentralMetadata = { pom ->
     root.appendNode('url', project.vcs)
     root.children().last() + pomConfig
 }
-
-project.ext.configurePom = pomConfig

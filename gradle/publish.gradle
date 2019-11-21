@@ -12,89 +12,123 @@ if (Files.exists(Paths.get("$project.rootDir/local.properties"))) {
     localProperties.each { prop -> project.ext.set(prop.key, prop.value) }
 }
 
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publish = true
-    override = true
+def isMultiplatform = project.name == "Time"
 
-    pkg {
-        userOrg = project.bintrayOrg
-        repo = project.bintrayRepository
-        name = project.bintrayPackage
-        licenses = ['MIT']
-        vcsUrl = vcs
-        version {
-            name = project.version
-            vcsTag = project.version
-            released = new Date()
-        }
-    }
+task stubSources(type: Jar) {
+    classifier = 'sources'
 }
 
-def isMultiplatform = project.name == "time"
+task stubJavadoc(type: Jar) {
+    classifier = 'javadoc'
+}
+
+task emptyJar(type: Jar) {
+}
 
 afterEvaluate {
     task sourcesJar(type: Jar) {
         classifier = 'sources'
         if (isMultiplatform) {
             from kotlin.sourceSets.commonMain.kotlin
+        } else {
+            from sourceSets.main.allSource
         }
     }
-}
-
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
 }
 
 afterEvaluate {
     publishing {
-        repositories {
-            maven {
-                url = "https://${project.bintrayOrg}.bintray.com/${project.bintrayRepository}"
+        def variantName = "${project.name}"
+
+        if (!isMultiplatform) {
+            publications {
+                maven(MavenPublication) { publication ->
+                    artifactId variantName
+                    publication.from components.java
+                    publication.artifact stubJavadoc
+                    publication.artifact sourcesJar
+                    publication.pom.withXml(configureMavenCentralMetadata)
+                }
             }
+
+            disableMetadataPublicationKotlinJvm()
+            return
         }
 
-        publications.all { publication ->
+        // Rename artifacts for backward compatibility
+        publications.all {
+            def type = it.name
+            println("Configuring $type")
+            switch (type) {
+                case 'kotlinMultiplatform':
+                    it.artifactId = "$variantName-native"
+                    it.artifact stubJavadoc
+                    it.artifact sourcesJar
+                    break
+
+                case 'metadata':
+                    it.artifactId = "$variantName-common"
+                    break
+
+                case 'jvm':
+                    it.artifactId = "$variantName"
+                    break
+
+                case 'js':
+                case 'native': // native most probably unused but I'll leave it just in case
+                    it.artifactId = "$variantName-$type"
+                    break
+            }
+            println("Artifact id = ${it.artifactId}")
+
             pom.withXml(configureMavenCentralMetadata)
+        }
 
-            // Publish all native under the iOS package.
-            if (publication.name == 'kotlinMultiplatform') {
-                artifactId = "$bintrayPackage"
-                artifact sourcesJar
-            }
-            // Publish the common module.
-            else if (publication.name == 'metadata') {
-                artifactId = "$bintrayPackage-common"
-            }
-            // Publish all the other modules.
-            else {
-                artifactId = "$bintrayPackage-$publication.name"
-            }
+        disableMetadataPublication()
+    }
+}
 
-            if (!publication.name.contains('ios') && publication.name != 'kotlinMultiplatform') {
-                moduleDescriptorGenerator = null
+private void disableMetadataPublicationKotlinJvm() {
+    publishing.publications.each { pub ->
+        pub.moduleDescriptorGenerator = null
+        tasks.matching { it.name == "generateMetadataFileFor${pub.name.capitalize()}Publication" }.all {
+            onlyIf { false }
+        }
+    }
+}
+
+private void disableMetadataPublication() {
+    kotlin.targets.all { target ->
+        def publication = publishing.publications.findByName(target.name)
+
+        if (publication != null) {
+            publication.artifact stubJavadoc
+            if (target.platformType.name != 'native') {
+                publication.moduleDescriptorGenerator = null
+                tasks.matching { it.name == "generateMetadataFileFor${name.capitalize()}Publication" }.all {
+                    onlyIf { false }
+                }
             }
         }
     }
 }
 
+
+apply from: project.rootProject.file("gradle/bintray.gradle")
+
+// This is required for K/N publishing
 bintrayUpload.dependsOn publishToMavenLocal
 
+// This is for easier debugging of bintray uploading problems
 bintrayUpload.doFirst {
-    publications = project.publishing.publications.findAll {
-        !it.name.contains('-test')
-    }.collect {
+    publications = project.publishing.publications.findAll { !it.name.contains('-test') }.collect {
         println("Uploading artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
         it.name
     }
 }
 
 publishToMavenLocal.doFirst {
-    project.publishing.publications.findAll {
-        !it.name.contains('-test')
-    }.collect {
+    project.publishing.publications.findAll { !it.name.contains('-test') }.collect {
         println("Will upload artifact '$it.groupId:$it.artifactId:$it.version' from publication '$it.name'")
-        it.name
     }
 }

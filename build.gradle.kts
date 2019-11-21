@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath("com.moowork.gradle:gradle-node-plugin:+")
-        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:+")
+        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4-jetbrains-5")
     }
 }
 
