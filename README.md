@@ -274,7 +274,7 @@ The library uses only Kotlin common code and does not provide explicit implement
 |:--------------------:	|:-----------:	|:-----------:	|:-----------:	|:------------------------------------:	|:-----------:	|:-------:	|:-----:	|
 |  Built using Gradle  	|     YES     	|     YES     	|     YES     	|                  YES                 	|     YES     	|    NO   	|   NO  	|
 |    Unit Tests     	| YES, passed 	| YES, passed 	| YES, passed 	| YES, failed due to bad configuration 	| YES, passed 	|    Not run   	|   Not run  	|
-| Published to Bintray 	|  YES, -native  	| YES, -macos 	|  YES, -jvm  	|               YES, -js               	|   YES, -js  	|    NO   	|   NO  	|
+| Published to Bintray 	|  YES, -native  	| YES, -macos 	|  YES  	|               YES, -js               	|   YES, -js  	|    NO   	|   NO  	|
 |   Used in Production  	|     YES     	|      NO     	|     YES     	|                  NO                  	|      NO     	|    NO   	|   NO  	|
 
 If you start using this library in a project different on other platforms than iOS or Android, make a PR to update this file, so that others know that it has been implemented successfully somewhere.
