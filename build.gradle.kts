@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("multiplatform") version("1.3.71")
+    kotlin("multiplatform") version ("1.3.72")
     id("maven-publish")
 }
 
@@ -25,7 +25,6 @@ version = project.property("version")!!
 kotlin {
 
     targets {
-
         jvm()
         js("js") {
             browser {
