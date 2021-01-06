@@ -214,55 +214,13 @@ allprojects {
 }
 ```
 
-Add the dependency to your `build.gradle`:
-
-```groovy
-dependencies {
-    implementation "io.github.mrasterisco:Time-<target>:<version>"
-}
-```
-
-Since version 1.5.0, targets follow the same naming convention used by KotlinX Serialization and other KotlinX libraries. See below for further details.
-
-#### Common
-To include the library into a Kotlin common module, use:
-
-```groovy
-dependencies {
-    implementation "io.github.mrasterisco:Time-common:<version>"
-}
-```
-
-#### JVM
-To include the library into a JVM module (including Android), use:
-
-```groovy
-dependencies {
-    implementation "io.github.mrasterisco:Time:<version>"
-}
-```
-
-#### Native
-To include the library into a Native module, use:
-
-```groovy
-dependencies {
-    implementation "io.github.mrasterisco:Time-native:<version>"
-}
-```
-
-If you're including the library into a target that builds for multiple architectures, make sure to put the following into your `settings.gradle` file.
+Since version 1.6.2 (with Kotlin 1.4), Time can be imported as dependency by just referencing it in the `commonMain` module:
 
 ```kotlin
-enableFeaturePreview("GRADLE_METADATA")
-```
-
-#### JS
-To include the library into your JavaScript module, use:
-
-```groovy
-dependencies {
-    implementation "io.github.mrasterisco:Time-js:<version>"
+val commonMain by getting {
+    dependencies {
+        implementation("io.github.mrasterisco:Time:<version>")
+    }
 }
 ```
 
@@ -270,14 +228,14 @@ dependencies {
 
 The library uses only Kotlin common code and does not provide explicit implementation for any platform, hence it should work out-of-the-box everywhere. See the table below for further details:
 
-|                      	|     iOS     	|    macOS    	|     JVM     	|                nodeJS                	|  browserJS  	| Windows 	| Linux 	|
-|:--------------------:	|:-----------:	|:-----------:	|:-----------:	|:------------------------------------:	|:-----------:	|:-------:	|:-----:	|
-|  Built using Gradle  	|     YES     	|     YES     	|     YES     	|                  YES                 	|     YES     	|    NO   	|   NO  	|
-|    Unit Tests     	| YES, passed 	| YES, passed 	| YES, passed 	| YES, failed due to bad configuration 	| YES, passed 	|    Not run   	|   Not run  	|
-| Published to Bintray 	|  YES, -native  	| YES, -macos 	|  YES  	|               YES, -js               	|   YES, -js  	|    NO   	|   NO  	|
-|   Used in Production  	|     YES     	|      NO     	|     YES     	|                  NO                  	|      NO     	|    NO   	|   NO  	|
+|                      | iOS         | macOS       | watchOS     | JVM         | nodeJS           | browserJS        | Windows | Linux   |
+|----------------------|-------------|-------------|-------------|-------------|------------------|------------------|---------|---------|
+| Assembled            | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
+| Unit Tests           | YES, passed | YES, passed | YES, passed | YES, passed | Removed in 1.6.0 | Removed in 1.6.0 | Not run | Not run |
+| Published to Bintray | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
+| Used in Production   | YES         | NO          | NO          | YES         | NO               | NO               | NO      | NO      |
 
-If you start using this library in a project different on other platforms than iOS or Android, make a PR to update this file, so that others know that it has been implemented successfully somewhere.
+If you start using this library in a project different on other platforms than iOS, Android or the JVM, please make a PR to update this file, so that others know that it has been implemented successfully somewhere.
 
 ## Contributing
 The goal is for the library to be used wherever possible. If there are extension functions or features you think the library should have, feel free to add them and send a pull request or open an issue.
