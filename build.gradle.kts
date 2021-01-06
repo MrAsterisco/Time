@@ -1,14 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven { url = uri("https://dl.bintray.com/jetbrains/kotlin-native-dependencies") }
-    }
-    dependencies {
-        classpath("com.moowork.gradle:gradle-node-plugin:+")
-        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
-    }
-}
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.HostManager
+import java.net.URI
+import java.util.*
 
 plugins {
     kotlin("multiplatform") version ("1.4.21")
@@ -26,13 +19,6 @@ kotlin {
 
     targets {
         jvm()
-        js("js") {
-            browser {
-            }
-            nodejs {
-            }
-        }
-
         ios()
         watchos()
         macosX64("macos")
@@ -62,24 +48,85 @@ kotlin {
                 implementation(kotlin("test-junit"))
             }
         }
-        val jsMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-js"))
-            }
-        }
-        val jsTest by getting {
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
         val macosMain by getting { }
         val macosTest by getting { }
         val iosMain by getting { }
         val iosTest by getting { }
     }
 
-}
+    plugins.withId("maven-publish") {
+        // https://github.com/gradle/gradle/issues/11412#issuecomment-555413327
+        System.setProperty("org.gradle.internal.publish.checksums.insecure", "true")
 
-apply(from = rootProject.file("gradle/publish.gradle"))
-apply(from = rootProject.file("gradle/node-js.gradle"))
-apply(from = rootProject.file("gradle/test-mocha-js.gradle"))
+        configure<PublishingExtension> {
+            val vcs: String by project
+            val bintrayOrg: String by project
+            val bintrayRepository: String by project
+            val bintrayPackage: String by project
+
+            repositories {
+                val local = Properties()
+                val localProperties: File = rootProject.file("local.properties")
+                if (localProperties.exists()) {
+                    localProperties.inputStream().use { local.load(it) }
+                }
+
+                maven {
+                    name = "bintray"
+                    url =
+                        URI("https://api.bintray.com/maven/$bintrayOrg/$bintrayRepository/$bintrayPackage/;publish=0;override=0")
+                    credentials {
+                        username = local["bintrayUser"] as String?
+                        password = local["bintrayApiKey"] as String?
+                    }
+                }
+            }
+
+            publications.withType<MavenPublication> {
+                pom {
+                    name.set(project.name)
+                    description.set(project.description)
+                    url.set(vcs)
+                    licenses {
+                        license {
+                            name.set("MIT")
+                            url.set("$vcs/blob/master/LICENCE.md")
+                            distribution.set("repo")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set(bintrayOrg)
+                            name.set("Alessio Moiso")
+                        }
+                    }
+                    scm {
+                        connection.set("$vcs.git")
+                        developerConnection.set("$vcs.git")
+                        url.set(vcs)
+                    }
+                }
+            }
+
+            val taskPrefixes = when {
+                HostManager.hostIsLinux -> listOf(
+                    "publishLinux",
+                    "publishJs",
+                    "publishJvm",
+                    "publishMetadata",
+                    "publishKotlinMultiplatform"
+                )
+                HostManager.hostIsMac -> listOf("publishMacos", "publishIos")
+                HostManager.hostIsMingw -> listOf("publishMingw")
+                else -> error("Unknown host, abort publishing.")
+            }
+
+            val publishTasks = tasks.withType<PublishToMavenRepository>().matching { task ->
+                taskPrefixes.any { task.name.startsWith(it) }
+            }
+
+            tasks.register("publishAll") { dependsOn(publishTasks) }
+        }
+    }
+
+}
