@@ -1,4 +1,3 @@
-rootProject.name = "Time"
-enableFeaturePreview("GRADLE_METADATA")
+rootProject.name = "time"
 
 include(":time", ":time-android")
