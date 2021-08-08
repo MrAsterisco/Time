@@ -204,38 +204,48 @@ The content of the Android extensions provided by the original library have not 
 
 ## Installation
 
-Add the repository to your `build.gradle`:
+Add the GitHub registry to your `build.gradle`:
 
-```groovy
+```kotlin
 allprojects {
  repositories {
-    maven { url "https://dl.bintray.com/mrasterisco/Maven" }
+     maven {
+         url = uri("https://maven.pkg.github.com/mrasterisco/time")
+         credentials {
+             username = <YOUR GITHUB USERNAME>
+             password = <YOUR GITHUB PERSONAL ACCESS TOKEN>
+         }
+     }
  }
 }
 ```
+
+GitHub doesn't support accessing packages without authentication ([more info](https://github.community/t/download-from-github-package-registry-without-authentication/14407/96). You can generate a personal access token for your account [here](https://github.com/settings/tokens).
 
 Since version 1.6.2 (with Kotlin 1.4), Time can be imported as dependency by just referencing it in the `commonMain` module:
 
 ```kotlin
 val commonMain by getting {
     dependencies {
-        implementation("io.github.mrasterisco:Time:<version>")
+        implementation("io.github.mrasterisco:time:<version>")
     }
 }
 ```
 
 ### Compatibility
 
-The library uses only Kotlin common code and does not provide explicit implementation for any platform, hence it should work out-of-the-box everywhere. See the table below for further details:
+Time is built with Kotlin 1.5 and Gradle 7.0.
+
+The library implements only Kotlin common code and does not provide explicit implementations for any platform, hence it should work out-of-the-box everywhere. See the table below for further details:
 
 |                      | iOS         | macOS       | watchOS     | JVM         | nodeJS           | browserJS        | Windows | Linux   |
 |----------------------|-------------|-------------|-------------|-------------|------------------|------------------|---------|---------|
 | Assembled            | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
-| Unit Tests           | YES, passed | YES, passed | YES, passed | YES, passed | Removed in 1.6.0 | Removed in 1.6.0 | Not run | Not run |
-| Published to Bintray | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
+| Unit Tests           | YES, passed | YES, passed | YES, passed | YES, passed | Removed in 1.6.0 | Removed in 1.6.0 | Not built | Not built |
+| Published to GitHub Packages | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
 | Used in Production   | YES         | NO          | NO          | YES         | NO               | NO               | NO      | NO      |
 
-If you start using this library in a project different on other platforms than iOS, Android or the JVM, please make a PR to update this file, so that others know that it has been implemented successfully somewhere.
+If you start using this library in a project different on other platforms than iOS, Android or the JVM, please make a PR to update this file, so that others know that it has been implemented successfully on there as well.
 
 ## Contributing
 The goal is for the library to be used wherever possible. If there are extension functions or features you think the library should have, feel free to add them and send a pull request or open an issue.
