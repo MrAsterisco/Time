@@ -241,11 +241,11 @@ The library implements only Kotlin common code and does not provide explicit imp
 |                      | iOS         | macOS       | watchOS     | JVM         | nodeJS           | browserJS        | Windows | Linux   |
 |----------------------|-------------|-------------|-------------|-------------|------------------|------------------|---------|---------|
 | Assembled            | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
-| Unit Tests           | YES, passed | YES, passed | YES, passed | YES, passed | Removed in 1.6.0 | Removed in 1.6.0 | Not run | Not run |
+| Unit Tests           | YES, passed | YES, passed | YES, passed | YES, passed | Removed in 1.6.0 | Removed in 1.6.0 | Not built | Not built |
 | Published to GitHub Packages | YES         | YES         | YES         | YES         | Removed in 1.6.0 | Removed in 1.6.0 | NO      | NO      |
 | Used in Production   | YES         | NO          | NO          | YES         | NO               | NO               | NO      | NO      |
 
-If you start using this library in a project different on other platforms than iOS, Android or the JVM, please make a PR to update this file, so that others know that it has been implemented successfully somewhere.
+If you start using this library in a project different on other platforms than iOS, Android or the JVM, please make a PR to update this file, so that others know that it has been implemented successfully on there as well.
 
 ## Contributing
 The goal is for the library to be used wherever possible. If there are extension functions or features you think the library should have, feel free to add them and send a pull request or open an issue.
